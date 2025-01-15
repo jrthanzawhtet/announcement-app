@@ -32,6 +32,9 @@ public class Media {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MediaType type;
+    
+    @Column
+    private String tags;
 
     @Lob
     @Column(nullable = false)
