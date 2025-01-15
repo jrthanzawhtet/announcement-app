@@ -1,6 +1,7 @@
 package com.jdc.spring.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,8 +19,14 @@ public class AppUserDetailsService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		var account = accountRepo.findById(username)
+				.orElseThrow(() -> new UsernameNotFoundException(username));
+		
+		var builder = User.withUsername(username)
+				.password(account.getPassword())
+				.authorities(account.getRole().name());
+		return builder.build();
 	}
 	
 	

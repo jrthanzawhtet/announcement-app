@@ -36,8 +36,7 @@ public class AnnouncementApiSecurityConfiguration {
 		
 		http.authorizeHttpRequests(req -> {
 			req.requestMatchers("/resources/**", "/public/**", "/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll();
-			req.requestMatchers("/member/**").hasAnyAuthority(Role.Member.name(), Role.Admin.name());
-			req.requestMatchers("/employee/**").hasAnyAuthority(Role.Employee.name(), Role.Owner.name(), Role.Admin.name());
+			req.requestMatchers("/employee/**").hasAnyAuthority(Role.User.name(), Role.Admin.name());
 			req.anyRequest().denyAll();
 		});
 		

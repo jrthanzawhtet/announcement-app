@@ -27,7 +27,7 @@ public class AdminUserInitializer {
 			admin.setName("Admin User");
 			admin.setLoginId("admin");
 			admin.setPassword(passwordEncoder.encode("admin"));
-			//admin.setRole(Role.Admin);
+			admin.setRole(Role.Admin);
 			repo.save(admin);
 		}
 	}

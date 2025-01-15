@@ -16,16 +16,18 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Jwts;
 
+
 @Service
 public class JwtTokenProvider {
 	
 	@Value("${app.jwt.token.issuer}")
 	private String issuer;
+	
 	@Value("${app.jwt.token.life}")
 	private int tokenLife;
 	
 	private SecretKey signKey = Jwts.SIG.HS512.key().build();
-	
+		
 	public Optional<String> generateToken(Authentication authentication) {
 		
 		var issueAt = new Date();

@@ -8,3 +8,4 @@ public interface AccountRepo extends BaseRepository<Account, String>{
 	long countByLoginId(String loginId);
 
 }
+

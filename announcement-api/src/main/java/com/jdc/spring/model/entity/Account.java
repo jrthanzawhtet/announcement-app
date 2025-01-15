@@ -15,7 +15,7 @@ public class Account {
 
 	@Id
 	private String loginId;
-	
+
 	private String name;
 
 	@Column(nullable = false)
@@ -23,5 +23,12 @@ public class Account {
 
 	@Column(nullable = false)
 	private Role role;
+
+	public Account(String loginId) {
+		this.loginId = loginId;
+	}
+
+	public Account() {
+	}
 
 }
