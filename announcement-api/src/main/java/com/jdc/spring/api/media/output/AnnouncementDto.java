@@ -2,6 +2,7 @@ package com.jdc.spring.api.media.output;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.jdc.spring.model.constants.MediaType;
 import com.jdc.spring.model.entity.Account;
@@ -22,6 +23,7 @@ public class AnnouncementDto {
 	private Long announcementId;
 	private String title;
 	private String content;
+    private List<String> images;
 	private String tags;
 	private String link;
 	private String fileName;
@@ -36,6 +38,7 @@ public class AnnouncementDto {
 				root.get(Announcement_.announcementId),
 				root.get(Announcement_.title),
 				root.get(Announcement_.content),
+				root.get(Announcement_.IMAGES),	
 				root.get(Announcement_.tags),
 				root.get(Announcement_.link),
 				root.get(Announcement_.fileName),
@@ -45,5 +48,6 @@ public class AnnouncementDto {
 				root.get(Announcement_.postedBy)
 				);
 	}
+
 
 }
