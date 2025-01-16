@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -75,9 +76,7 @@ public class PhotoUploadService {
 			
 			Files.copy(file.getInputStream(), imageFolderPath.resolve(imageName), StandardCopyOption.REPLACE_EXISTING);
 			
-	        announcement.getImages().add(imageName);
-	        announcementRepo.save(announcement);
-
+			announcement.getImages().add(imageName);
 			return imageName;
 		} catch (IOException e) {
 			throw new ApiBusinessException(e.getMessage());
