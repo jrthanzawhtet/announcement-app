@@ -17,43 +17,38 @@ import com.jdc.spring.model.constants.Role;
 import com.jdc.spring.security.JwtTokenFilter;
 import com.jdc.spring.utils.exceptions.ApiSecurityExceptionResolver;
 
-
 @Configuration
 @EnableMethodSecurity
 public class AnnouncementApiSecurityConfiguration {
-	
+
 	@Autowired
 	private JwtTokenFilter jwtTokenFilter;
-	
+
 	@Autowired
 	private ApiSecurityExceptionResolver apiSecurityExceptionResolver;
-	
+
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		
+
 		http.csrf(csrf -> csrf.disable());
-		http.cors(cors -> {});
-		
-        http.authorizeHttpRequests(req -> req.anyRequest().permitAll());
-		
-		/*
-		 * http.authorizeHttpRequests(req -> { req.requestMatchers("/resources/**",
-		 * "/public/**", "/api/v1/auth/**", "/v3/api-docs/**",
-		 * "/swagger-ui/**").permitAll();
-		 * req.requestMatchers("/user/**").hasAnyAuthority(Role.User.name(),
-		 * Role.Admin.name()); req.anyRequest().denyAll(); });
-		 */
-		
+		http.cors(cors -> {
+		});
+
+
+		http.authorizeHttpRequests(req -> {
+	        req.anyRequest().permitAll();
+		});
+
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.httpBasic(basic -> basic.disable());
-		
+
 		http.exceptionHandling(config -> {
 			config.accessDeniedHandler(apiSecurityExceptionResolver);
 			config.authenticationEntryPoint(apiSecurityExceptionResolver);
 		});
-		
+
 		http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
-		
+
 		return http.build();
 	}
 
@@ -61,7 +56,7 @@ public class AnnouncementApiSecurityConfiguration {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();

@@ -9,10 +9,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jdc.spring.model.entity.Announcement;
+import com.jdc.spring.model.repo.AnnouncementRepo;
 import com.jdc.spring.utils.exceptions.ApiBusinessException;
 
 
@@ -21,6 +24,9 @@ public class PhotoUploadService {
 
 	@Value("${app.image.folder}")
 	private String imageFolder;
+	
+	@Autowired
+	private AnnouncementRepo announcementRepo;
 	
 	private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
@@ -57,6 +63,7 @@ public class PhotoUploadService {
 	public String saveAnnouncementImage(Long id, MultipartFile file, int index) {
 
 		try {
+			var announcement = new Announcement();
 			var extension = getFileExtension(file);
 			var dateTime = LocalDateTime.now().format(DF);
 			var imageName = "announcement_%s_%s_%s.%s".formatted(dateTime, id, index + 1, extension);
@@ -67,6 +74,9 @@ public class PhotoUploadService {
 			}
 			
 			Files.copy(file.getInputStream(), imageFolderPath.resolve(imageName), StandardCopyOption.REPLACE_EXISTING);
+			
+	        announcement.getImages().add(imageName);
+	        announcementRepo.save(announcement);
 
 			return imageName;
 		} catch (IOException e) {
