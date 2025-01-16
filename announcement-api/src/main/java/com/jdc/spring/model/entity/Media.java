@@ -42,5 +42,8 @@ public class Media {
 
     @Column(nullable = false)
     private String fileName;
+    
+    @Column(nullable = true)
+    private String link;
 
 }

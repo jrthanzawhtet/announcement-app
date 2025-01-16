@@ -22,7 +22,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @Entity
-@Table(name = "Announcements")
+@Table(name = "announcements")
 @EqualsAndHashCode(callSuper = false)
 public class Announcement extends AbstractEntity {
 	
@@ -30,17 +30,11 @@ public class Announcement extends AbstractEntity {
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long announcementId;
 
-	    @Column(nullable = false)
+	    @Column(nullable = false, columnDefinition = "TEXT")
 	    private String title;
 
-	    @Column(nullable = false, columnDefinition = "TEXT")
+	    @Column(columnDefinition = "TEXT")
 	    private String content;
-
-	    @Column
-	    private String photoPath;
-
-	    @Column
-	    private String videoPath;
 
 	    @Column(nullable = false)
 	    private LocalDate postDate;
