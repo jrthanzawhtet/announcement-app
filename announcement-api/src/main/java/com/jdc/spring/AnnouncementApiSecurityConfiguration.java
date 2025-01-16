@@ -34,11 +34,15 @@ public class AnnouncementApiSecurityConfiguration {
 		http.csrf(csrf -> csrf.disable());
 		http.cors(cors -> {});
 		
-		http.authorizeHttpRequests(req -> {
-			req.requestMatchers("/resources/**", "/public/**", "/api/v1/auth/**", "/v3/api-docs/**", "/swagger-ui/**").permitAll();
-			req.requestMatchers("/employee/**").hasAnyAuthority(Role.User.name(), Role.Admin.name());
-			req.anyRequest().denyAll();
-		});
+        http.authorizeHttpRequests(req -> req.anyRequest().permitAll());
+		
+		/*
+		 * http.authorizeHttpRequests(req -> { req.requestMatchers("/resources/**",
+		 * "/public/**", "/api/v1/auth/**", "/v3/api-docs/**",
+		 * "/swagger-ui/**").permitAll();
+		 * req.requestMatchers("/user/**").hasAnyAuthority(Role.User.name(),
+		 * Role.Admin.name()); req.anyRequest().denyAll(); });
+		 */
 		
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.httpBasic(basic -> basic.disable());

@@ -61,7 +61,7 @@ public class Announcement extends AbstractEntity {
     private MediaType type;
 
 	@ManyToOne
-	@JoinColumn(name = "posted_by", nullable = false)
+	@JoinColumn(name = "posted_by")
 	private Account postedBy;
 
 	@CreatedDate
@@ -77,7 +77,7 @@ public class Announcement extends AbstractEntity {
 	private String modifyBy;
 	
 	@ElementCollection
-	@CollectionTable(name = "CATALOG_IMAGES")
+	@CollectionTable(name = "ANNOUNCHEMENT_IMAGES")
 	private List<String> images = new ArrayList<String>();
 
 }

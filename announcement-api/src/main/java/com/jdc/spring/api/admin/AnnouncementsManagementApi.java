@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,6 @@ import com.jdc.spring.model.service.AnnouncementService;
 import com.jdc.spring.utils.io.ApiResponse;
 import com.jdc.spring.utils.io.DataModificationResult;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RestController
 @RequestMapping("admin/announcements")
@@ -28,7 +28,7 @@ public class AnnouncementsManagementApi {
 	private AnnouncementService service;
 
 	@PostMapping
-	public ApiResponse<DataModificationResult<Long>> create(@Validated @RequestBody AnnouncementForm form,
+	public ApiResponse<DataModificationResult<Long>> create(@RequestBody AnnouncementForm form,
 			BindingResult result) {
 		return ApiResponse.success(service.create(form));
 	}
@@ -36,7 +36,7 @@ public class AnnouncementsManagementApi {
 	@PutMapping("{id}")
 	public ApiResponse<DataModificationResult<Long>> update(
 			@PathVariable Long id, 
-			@Validated @RequestBody AnnouncementForm form, BindingResult result) {
+			@RequestBody AnnouncementForm form, BindingResult result) {
 		return ApiResponse.success(service.update(id, form));
 	}
 	

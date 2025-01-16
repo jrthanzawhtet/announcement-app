@@ -29,6 +29,7 @@ public class AnnouncementService implements Serializable {
 
 
 	@Value("${app.image.folder}")
+	
 	private String imageFolder;
 	
 	private final PhotoUploadService photoUploadService;
