@@ -3,14 +3,22 @@ package com.jdc.spring.model.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.jdc.spring.model.constants.MediaType;
+
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,38 +33,51 @@ import lombok.EqualsAndHashCode;
 @Table(name = "announcements")
 @EqualsAndHashCode(callSuper = false)
 public class Announcement extends AbstractEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long announcementId;
+
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String title;
+
+	@Column(columnDefinition = "TEXT")
+	private String content;
+
+	private String tags;
+
+	private String link;
 	
-	 @Id
-	    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	    private Long announcementId;
+    private String fileName;
 
-	    @Column(nullable = false, columnDefinition = "TEXT")
-	    private String title;
+	@Column(nullable = false)
+	private LocalDate postDate;
 
-	    @Column(columnDefinition = "TEXT")
-	    private String content;
+	@Column(nullable = false)
+	private LocalDateTime postTime;
+	
+	@Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MediaType type;
 
-	    @Column(nullable = false)
-	    private LocalDate postDate;
+	@ManyToOne
+	@JoinColumn(name = "posted_by", nullable = false)
+	private Account postedBy;
 
-	    @Column(nullable = false)
-	    private LocalTime postTime;
+	@CreatedDate
+	private LocalDateTime createAt;
 
-	    @ManyToOne
-	    @JoinColumn(name = "posted_by", nullable = false)
-	    private Account postedBy;
-	    
-	    @CreatedDate
-		private LocalDateTime createAt;
+	@LastModifiedDate
+	private LocalDateTime modifiedAt;
 
-		@LastModifiedDate
-		private LocalDateTime modifiedAt;
+	@CreatedBy
+	private String createBy;
 
-		@CreatedBy
-		private String createBy;
-
-		@LastModifiedBy
-		private String modifyBy;
-
+	@LastModifiedBy
+	private String modifyBy;
+	
+	@ElementCollection
+	@CollectionTable(name = "CATALOG_IMAGES")
+	private List<String> images = new ArrayList<String>();
 
 }

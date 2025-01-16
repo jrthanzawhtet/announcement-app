@@ -1,31 +1,33 @@
 package com.jdc.spring.api.media;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jdc.spring.model.entity.Announcement;
+import com.jdc.spring.api.media.input.AnnouncementForm;
+import com.jdc.spring.api.media.output.AnnouncementDto;
 import com.jdc.spring.model.service.AnnouncementService;
 import com.jdc.spring.utils.io.ApiResponse;
 
 @RestController
-@RequestMapping("/publish")
+@RequestMapping("public/announcement")
 public class AnnouncementApi {
-	
+
 	@Autowired
 	private AnnouncementService service;
-	
-	
+
 	/*
-	 * @GetMapping public ApiResponse<Page<Announcement>> search(MemberSearch form,
+	 * @GetMapping("{id}") public ApiResponse<AnnouncementForm>
+	 * showDetails(@PathVariable int id) { return
+	 * ApiResponse.success(service.findById(id)); }
 	 * 
-	 * @RequestParam(required = false, defaultValue = "0") int page,
-	 * 
-	 * @RequestParam(required = false, defaultValue = "10") int size) { return
-	 * ApiResponse.success(service.search(form, page, size)); }
+	 * @GetMapping("announcements") public ApiResponse<List<AnnouncementDto>>
+	 * findAllAnnouncement() { return
+	 * ApiResponse.success(service.getAllAnnouncements()); }
 	 */
 
 }
