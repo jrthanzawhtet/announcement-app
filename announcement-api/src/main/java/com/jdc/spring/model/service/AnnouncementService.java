@@ -17,6 +17,7 @@ import com.jdc.spring.api.media.input.AnnouncementForm;
 import com.jdc.spring.api.media.output.AnnouncementDto;
 import com.jdc.spring.model.repo.AccountRepo;
 import com.jdc.spring.model.repo.AnnouncementRepo;
+import com.jdc.spring.model.repo.MediaRepo;
 import com.jdc.spring.utils.exceptions.ApiBusinessException;
 import com.jdc.spring.utils.io.DataModificationResult;
 
@@ -40,6 +41,8 @@ public class AnnouncementService implements Serializable {
 	private final AnnouncementRepo announcementRepo;
 
 	private final AccountRepo accountRepo;
+	
+	private final MediaRepo mediaRepo;
 
 	public DataModificationResult<Long> create(AnnouncementForm form) {		
 		var entity = form.entity();
@@ -70,7 +73,6 @@ public class AnnouncementService implements Serializable {
 				.orElseThrow(() -> new ApiBusinessException("Invalid Announcement id."));
 		
 		var images = photoUploadService.saveAnnouncementImages(id, files);
-		entity.getImages().addAll(images);
 		
 		return new DataModificationResult<Long>(entity.getAnnouncementId(), "Announcement has been updated.");
 	}

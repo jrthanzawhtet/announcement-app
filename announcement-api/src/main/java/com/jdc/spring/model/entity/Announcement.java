@@ -13,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import com.jdc.spring.model.constants.MediaType;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -24,6 +25,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,22 +49,25 @@ public class Announcement extends AbstractEntity {
 	private String tags;
 
 	private String link;
-	
-    private String fileName;
+
+	private String fileName;
 
 	@Column(nullable = false)
 	private LocalDate postDate;
 
 	@Column(nullable = false)
 	private LocalDateTime postTime;
-	
+
 	@Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private MediaType type;
+	@Enumerated(EnumType.STRING)
+	private MediaType type;
 
 	@ManyToOne
 	@JoinColumn(name = "posted_by")
 	private Account postedBy;
+
+	@OneToMany(mappedBy = "announcement", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Media> mediaFiles = new ArrayList<>();
 
 	@CreatedDate
 	private LocalDateTime createAt;
@@ -75,9 +80,5 @@ public class Announcement extends AbstractEntity {
 
 	@LastModifiedBy
 	private String modifyBy;
-	
-	@ElementCollection
-	@CollectionTable(name = "ANNOUNCHEMENT_IMAGES")
-	private List<String> images = new ArrayList<String>();
 
 }
