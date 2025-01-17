@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jdc.spring.api.media.input.AnnouncementForm;
@@ -89,6 +90,13 @@ public class AnnouncementService implements Serializable {
 	    }
 
 	    return result;
+	}
+
+	@Transactional(readOnly = true)
+	public AnnouncementDto findById(Long id) {
+		return announcementRepo.findById(id)
+				.map(AnnouncementDto::toDto)
+				.orElseThrow(() -> new ApiBusinessException("Invalid Announcement id."));
 	}
 
 
