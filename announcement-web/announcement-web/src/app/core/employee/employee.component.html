@@ -1,0 +1,63 @@
+<nav class="navbar navbar-expand bg-white shadow-sm fixed-top">
+  <div class="container-fluid">
+    <a routerLink="/employee" class="navbar-brand ms-md-0 ms-3">
+      <i class="bi bi-house-gear-fill"></i>
+      <span class="d-none d-md-inline" style="font-size: 1.15rem;">Announcement Dashboard</span>
+    </a>
+
+    <ul class="navbar-nav ms-auto">
+      <li class="nav-item dropdown me-2">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Dashboard
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" [routerLink]="['/public']">To Public</a></li>
+          <li *ngIf="activeUser.role == 'Admin'"><a class="dropdown-item" [routerLink]="['/member']">To Member</a></li>
+          <li *ngIf="activeUser.role == 'Admin' || activeUser.role == 'Owner'"><a class="dropdown-item"
+              [routerLink]="['/owner']">To Owner</a></li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <button class="btn btn-danger text-white" (click)="logout()">
+          <span class="d-none d-md-inline">Logout </span> <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container-fluid" style="height: calc(100% - 56px);">
+  <div class="row h-100">
+    <!-- left nav bar -->
+    <nav class="col-2 navmenu bg-white shadow h-100">
+      <div class="text-center text-lg-start h-100">
+        <a [routerLink]="['/employee', 'category']" routerLinkActive="nav-active" class="navmenu-link ps-lg-2">
+          <i class="bi bi-megaphone-fill me-lg-2"></i>
+          <span class="d-none d-lg-inline">Announcement</span>
+        </a>
+        <a [routerLink]="['/employee', 'sale']" routerLinkActive="nav-active" class="navmenu-link ps-lg-2">
+          <i class="bi bi-person-gear me-lg-2"></i>
+          <span class="d-none d-lg-inline">Service</span>
+        </a>
+
+        <a [routerLink]="['/employee', 'member']" routerLinkActive="nav-active" class="navmenu-link ps-lg-2">
+          <i class="bi bi-buildings me-lg-2"></i>
+          <span class="d-none d-lg-inline">Office</span>
+        </a>
+        <a [routerLink]="['/employee', 'catalog']" routerLinkActive="nav-active" class="navmenu-link ps-lg-2">
+          <i class="bi bi-gear me-lg-2"></i>
+          <span class="d-none d-lg-inline">Setting</span>
+        </a>
+
+      </div>
+    </nav>
+
+    <!-- main -->
+    <main class="content col-10 p-0 pe-2" style="height: calc(100% - 100px)">
+      <div class="mt-4 ps-4 h-100">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+</div>

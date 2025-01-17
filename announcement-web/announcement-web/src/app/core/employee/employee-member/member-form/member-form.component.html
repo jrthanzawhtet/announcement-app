@@ -1,0 +1,131 @@
+<div class="row justify-content-center">
+
+  <div class="col-lg-8 col-md-10 col-12">
+
+    <div class="bg-white p-4 rounded-3">
+
+      <div class="mb-md-4 mb-2 d-flex justify-content-center position-relative">
+        <a [routerLink]="['..']" class="icon-link position-absolute start-0 top-25 h3 d-none d-md-inline">
+          <i class="bi bi-caret-left-fill"></i>
+        </a>
+
+        <h4 class="fw-bold text-center">
+          {{ id.value == 0 ? 'Add New Member' : 'Member Edit' }}
+        </h4>
+      </div>
+
+      <form [formGroup]="form">
+
+        <!-- Login Id -->
+        <div class="row mb-3 g-3" *ngIf="!update || update == 'false'">
+          <div class="col-md col-12">
+            <app-form-group icon="bi-person-square" label="Login Id" [valid]="loginId.valid" [touch]="loginId.touched"
+              [dirty]="loginId.dirty">
+              <input formControlName="loginId" type="text" class="form-control" placeholder="Enter login id">
+            </app-form-group>
+          </div>
+        </div>
+
+        <!-- Member name and email -->
+        <div class="row mb-3 g-3">
+          <div class="col-md col-12">
+            <app-form-group icon="bi-card-heading" label="Name" [valid]="name.valid" [touch]="name.touched"
+              [dirty]="name.dirty">
+              <input formControlName="name" type="text" class="form-control" placeholder="eg. Emily Rudd">
+            </app-form-group>
+          </div>
+          <div class="col">
+            <app-form-group icon="bi-envelope" label="Email" [valid]="email.valid" [touch]="email.touched"
+              [dirty]="email.dirty">
+              <input formControlName="email" type="email" class="form-control" placeholder="example@gmail.com">
+            </app-form-group>
+          </div>
+        </div>
+
+        <!-- Phone and NRC -->
+        <div class="row mb-3 g-3">
+          <div class="col-md col-12">
+            <app-form-group icon="bi-telephone" label="Phone" [valid]="phone.valid" [touch]="phone.touched"
+              [dirty]="phone.dirty">
+              <input formControlName="phone" type="tel" class="form-control" placeholder="09-xxx-xxx-xxx">
+            </app-form-group>
+          </div>
+          <div class="col">
+            <app-form-group icon="bi-calendar-date" label="Date of Birth" [valid]="dob.valid" [touch]="dob.touched"
+              [dirty]="dob.dirty">
+              <input formControlName="dob" type="date" class="form-control">
+            </app-form-group>
+          </div>
+        </div>
+
+        <!-- State and District -->
+        <div class="row mb-3 g-3">
+          <div class="col-md col-12">
+            <app-form-group icon="bi-globe-central-south-asia" label="State">
+              <select #stateVal class="form-select" (change)="selectDistrict(stateVal.value)">
+                <option value="0">Select State</option>
+                <option *ngFor="let state of states" [value]="state.id">{{ state.name }}</option>
+              </select>
+            </app-form-group>
+          </div>
+
+          <div class="col">
+            <app-form-group icon="bi-pin-map" label="District">
+              <select #districtVal class="form-select" (change)="selectTownship(districtVal.value)">
+                <option value="0">Select District</option>
+                <option *ngFor="let district of districts" [value]="district.id">{{ district.name }}</option>
+              </select>
+            </app-form-group>
+          </div>
+        </div>
+
+        <!-- Township and Address -->
+        <div class="row mb-3 g-3">
+          <div class="col-md col-12">
+            <app-form-group icon="bi-geo-alt" label="Township" [valid]="townshipId.valid" [touch]="townshipId.touched"
+              [dirty]="townshipId.dirty">
+              <select formControlName="townshipId" class="form-select">
+                <option value="0">Select Township</option>
+                <option *ngFor="let township of townships" [value]="township.id">{{ township.name }}</option>
+              </select>
+            </app-form-group>
+          </div>
+
+          <div class="col">
+            <app-form-group icon="bi-cursor" label="Address" [valid]="address.valid" [touch]="address.touched"
+              [dirty]="address.dirty">
+              <input formControlName="address" type="text" class="form-control"
+                placeholder="eg. 28(B), Bo Gyoke Rd, Latha">
+            </app-form-group>
+          </div>
+        </div>
+
+        <div class="row justify-content-center mb-3">
+          <div class="col-auto">
+            <div>
+              <div class="form-check form-check-inline">
+                <input formControlName="gender" type="radio" id="male" class="form-check-input" value="Male">
+                <label for="male" class="form-check-label">Male</label>
+              </div>
+
+              <div class="form-check form-check-inline">
+                <input formControlName="gender" type="radio" id="female" class="form-check-input" value="Female">
+                <label for="female" class="form-check-label">Female</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col">
+            <button class="btn btn-danger text-white w-100" (click)="saveMember()"><i class="bi bi-save2"></i>
+              Save</button>
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

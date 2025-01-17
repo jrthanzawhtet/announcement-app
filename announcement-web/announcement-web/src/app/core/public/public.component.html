@@ -1,0 +1,71 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
+  <div class="container">
+    <a routerLink="/public" class="navbar-brand">Announcement Web</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" [routerLink]="['/public', 'home']" routerLinkActive="active">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/public', 'catalog']" routerLinkActive="active">Catalog</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0" *ngIf="!user">
+        <li class="nav-item">
+          <button class="btn btn-light" (click)="showLoginForm()">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span class="d-none d-md-inline"> Login</span>
+          </button>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0" *ngIf="user">
+        <li class="nav-item me-2 mb-2 mb-lg-0">
+          <button class="btn btn-light" [routerLink]="['/', user.role == 'Admin' ? 'owner' : user.role.toLowerCase()]">
+            <span class="d-none d-md-inline">To Dashboard </span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-light" (click)="logout()">
+            <span class="d-none d-md-inline">Log Out </span>
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container mt-4 h-100">
+  <router-outlet></router-outlet>
+</main>
+
+<form [formGroup]="form">
+  <app-modal-dialog btnColor="success" modalIcon="box-arrow-in-right" modalTitle="Log In"
+    modalId="publicLoginModalDialog">
+
+    <ng-container body>
+      <app-form-group label="Login Id" icon="bi-person-square" [margin]="true" [valid]="email.valid"
+        [touch]="email.touched" [dirty]="email.dirty">
+        <input formControlName="username" type="text" class="form-control" placeholder="Enter Login Id">
+      </app-form-group>
+
+      <app-form-group label="Password" icon="bi-key" [valid]="password.valid" [touch]="password.touched"
+        [dirty]="password.dirty">
+        <input formControlName="password" type="password" class="form-control" placeholder="Enter password">
+      </app-form-group>
+    </ng-container>
+
+    <button class="btn btn-outline-success" (click)="login()">
+      <i class="bi bi-box-arrow-in-right"></i> Log In
+    </button>
+
+  </app-modal-dialog>
+</form>

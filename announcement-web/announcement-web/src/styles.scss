@@ -1,0 +1,186 @@
+/* You can add global styles to this file, and also import other style files */
+$primary: #905ee2;;
+$warning: #FFCC00;
+$bg: #FAF5E9;
+$success: #009B4D;
+$success-dark: #003400;
+$danger: #f05754;
+$danger-light: #ED7674;
+$info: #A2DCE0;
+$ptf: 'PT Serif', serif;
+$popf: 'Poppins', sans-serif;
+
+$enable-rounded: false;
+
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+.btn-outline-success:hover, .btn-danger, .btn-danger:hover, .btn-success, .btn-primary {
+  color: white;
+}
+
+.text-success-dark {
+  color: $success-dark;
+}
+
+.bg-danger-light {
+  background-color: $danger-light;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+body {
+  font-size: 1rem;
+  font-family: $ptf;
+  font-weight: 400;
+  background-color: $bg;
+}
+
+.upnav-shadow {
+  box-shadow: 0 0.2rem 0.2rem rgba(0, 0, 0, 0.15);
+}
+
+/* left nav bar */
+.navmenu {
+  font-size: 1rem;
+  padding-top: 1.5rem;
+  position: fixed;
+  left: 0;
+  top: 56px;
+}
+
+.navmenu a {
+  padding: 0.5rem;
+  color: $dark;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.nav-active, .navmenu a:hover {
+  background-color: $danger;
+  color: #fff;
+  border-radius: 0.3rem;
+}
+
+.nav-active > span, .nav-active > i {
+  color: #fff;
+}
+
+.content {
+  position: absolute;
+  left: 16.66666667%;
+  top: 56px;
+}
+
+.icon-link {
+  color: $dark;
+}
+
+.icon-link-primary {
+  color: $primary;
+}
+
+.icon-link-light {
+  color: $light;
+}
+
+.icon-link:hover i, .icon-link:hover {
+  color: $danger;
+  cursor: pointer;
+}
+
+.btn-outline-danger:hover {
+  color: #fff;
+}
+
+.form-control:focus, .form-check-input:focus, .form-select:focus {
+  border-color: #eeb7b6;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(237, 118, 116, 0.20);
+}
+
+.form-check-input:checked {
+  background-color: #f76967;
+  border-color: #f76967;
+}
+
+.alert-box {
+  padding: $spacer;
+  border: 1px solid #f07a0b;
+  border-left: 5px solid #f07a0b;
+}
+
+.alert-box > p {
+  margin: 0;
+}
+
+.card-link {
+  text-decoration: none;
+}
+
+.card-link:hover {
+  cursor: pointer;
+}
+
+.profile-image {
+  width: 50%;
+}
+
+@media (max-width: 992px) {
+  .profile-image {
+    width: 30%;
+  }
+}
+
+.carousel-item > img {
+  height: 300px;
+  width: auto;
+  object-fit: cover;
+}
+
+.carousel-img-indicator {
+  width: calc((100% / 5) - 2px);
+  height: auto;
+  cursor: grab;
+}
+
+td .dropdown-toggle::after {
+  display:none;
+}
+
+td > .dropdown {
+  width: 30px;
+  height: 30px;
+  padding: 0.2rem 0.37rem 0 0.37rem;
+}
+
+td > .dropdown:hover {
+  text-align: center;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #d4d4d4;
+}
+
+td > .dropdown > ul > li:hover {
+  background-color: #d4d4d4;
+}
+
+.catalog-no-image:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  filter: invert(1) grayscale(100);
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.two {
+  left: 33.333% !important;
+}
+
+.three {
+  left: 66.666% !important;
+}
