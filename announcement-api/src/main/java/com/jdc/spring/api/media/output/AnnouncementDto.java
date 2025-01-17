@@ -38,7 +38,7 @@ public class AnnouncementDto {
 	    private LocalDateTime postTime;
 	    private MediaType type;
 	    private Account postedBy;
-	
+	    
 	public static AnnouncementDto toDto(Announcement entity) {
 	    List<String> base64Images = entity.getMediaFiles().stream()
 	        .map(media -> {
@@ -73,7 +73,6 @@ public class AnnouncementDto {
 
 	
 	public static void select(CriteriaQuery<AnnouncementDto> cq, Root<Announcement> root) {
-		var announcement = root.join(Announcement_.ANNOUNCEMENT_ID);
 		cq.multiselect(
 				root.get(Announcement_.announcementId),
 				root.get(Announcement_.title),

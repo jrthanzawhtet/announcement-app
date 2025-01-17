@@ -24,7 +24,7 @@ public class AnnouncementsManagementApi {
 
 	@Autowired
 	private AnnouncementService service;
-
+	
 	@PostMapping
 	public ApiResponse<DataModificationResult<Long>> create(@RequestBody AnnouncementForm form, BindingResult result) {
 		return ApiResponse.success(service.create(form));
