@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jdc.spring.api.media.input.AnnouncementSearch;
 import com.jdc.spring.api.media.output.AnnouncementDto;
+import com.jdc.spring.api.media.output.AnnouncementShowLessDto;
 import com.jdc.spring.model.service.AnnouncementService;
 import com.jdc.spring.utils.io.ApiResponse;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,7 @@ public class PublicAnnouncementApi {
 	}
 	
 	@GetMapping("showLess")
-	public ApiResponse<List<AnnouncementDto>> showLess() {
+	public ApiResponse<List<AnnouncementShowLessDto>> showLess() {
 		return ApiResponse.success(announcementService.showLess());
 	}
 	

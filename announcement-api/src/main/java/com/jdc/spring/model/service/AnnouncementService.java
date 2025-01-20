@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jdc.spring.api.media.input.AnnouncementForm;
 import com.jdc.spring.api.media.input.AnnouncementSearch;
 import com.jdc.spring.api.media.output.AnnouncementDto;
+import com.jdc.spring.api.media.output.AnnouncementShowLessDto;
 import com.jdc.spring.model.entity.Announcement;
 import com.jdc.spring.model.entity.Announcement_;
 import com.jdc.spring.model.entity.Tag;
@@ -114,11 +115,11 @@ public class AnnouncementService implements Serializable {
 	    return result;
 	}
 	
-	public List<AnnouncementDto> showLess() {
-	    List<AnnouncementDto> result = Optional.ofNullable(announcementRepo.findAll())
+	public List<AnnouncementShowLessDto> showLess() {
+	    List<AnnouncementShowLessDto> result = Optional.ofNullable(announcementRepo.findAll())
 	        .orElse(Collections.emptyList())
 	        .stream()
-	        .map(AnnouncementDto::toShowLessDto)
+	        .map(AnnouncementShowLessDto::toShowLessDto)
 	        .collect(Collectors.toList());
 
 	    if (result.isEmpty()) {
