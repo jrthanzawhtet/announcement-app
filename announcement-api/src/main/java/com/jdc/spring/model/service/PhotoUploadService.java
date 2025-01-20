@@ -13,6 +13,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jdc.spring.model.entity.Announcement;
@@ -55,46 +56,60 @@ public class PhotoUploadService {
 		}
 	}
 
-	public List<String> saveAnnouncementImages(Long announcementId, List<MultipartFile> files) {
-		var list = new ArrayList<String>();
-
-		for (int i = 0; i < files.size(); i++) {
-			list.add(saveAnnouncementImage(announcementId, files.get(i), i));
+	@Transactional
+	public List<String> saveAnnouncementImages(Long id, List<MultipartFile> files) {
+		if (files == null || files.isEmpty()) {
+			throw new ApiBusinessException("No files provided to save.");
 		}
 
-		return list;
-	}
-	
+		List<String> savedImageNames = new ArrayList<>();
+		List<String> filePaths = new ArrayList<>();
 
-	public String saveAnnouncementImage(Long id, MultipartFile file, int index) {
+		Announcement announcement = announcementRepo.findById(id)
+				.orElseThrow(() -> new ApiBusinessException("Announcement not found with id: " + id));
 
-		try {
-			var extension = getFileExtension(file);
-			var dateTime = LocalDateTime.now().format(DF);
-			var imageName = "announcement_%s_%s_%s.%s".formatted(dateTime, id, index + 1, extension);
+		int size = files.size();
+		for (int i = 0; i < size; i++) {
+			MultipartFile file = files.get(i);
 
-			var imageFolderPath = Path.of(imageFolder);
-			if (!Files.exists(imageFolderPath)) {
-				Files.createDirectories(imageFolderPath);
+			try {
+				String extension = getFileExtension(file);
+				String dateTime = LocalDateTime.now().format(DF);
+				String imageName;
+
+				if (i == 0) {
+					imageName = "title_anno_%s_%s_%s.%s".formatted(dateTime, id, i + 1, extension);
+				} else {
+					imageName = "anno_%s_%s_%s.%s".formatted(dateTime, id, i + 1, extension);
+				}
+
+				Path imageFolderPath = Path.of(imageFolder);
+				if (!Files.exists(imageFolderPath)) {
+					Files.createDirectories(imageFolderPath);
+				}
+
+				Files.copy(file.getInputStream(), imageFolderPath.resolve(imageName),
+						StandardCopyOption.REPLACE_EXISTING);
+
+				String filePath = imageFolder + "/" + imageName;
+				filePaths.add(filePath);
+
+				savedImageNames.add(imageName);
+
+			} catch (IOException e) {
+				throw new ApiBusinessException(
+						"Error saving file: " + file.getOriginalFilename() + ". " + e.getMessage());
 			}
-
-			Files.copy(file.getInputStream(), imageFolderPath.resolve(imageName), StandardCopyOption.REPLACE_EXISTING);
-
-			Media media = new Media();
-			if(index == 0) {
-				media.setTitleFilePathName(imageFolder + "/" + imageName);
-			}
-	        media.setFilePathName(imageFolder + "/" + imageName);
-
-	        Announcement announcement = announcementRepo.findById(id)
-	            .orElseThrow(() -> new ApiBusinessException("Announcement not found with id: " + id));
-	        media.setAnnouncement(announcement);
-
-	        mediaRepo.save(media); 
-			return imageName;
-		} catch (IOException e) {
-			throw new ApiBusinessException(e.getMessage());
 		}
+
+		Media media = new Media();
+		media.setTitleFilePathName(filePaths.get(0));
+		media.setFilePathName(String.join(",", filePaths));
+		media.setAnnouncement(announcement);
+
+		mediaRepo.save(media);
+
+		return savedImageNames;
 	}
 
 	private String getFileExtension(MultipartFile file) {

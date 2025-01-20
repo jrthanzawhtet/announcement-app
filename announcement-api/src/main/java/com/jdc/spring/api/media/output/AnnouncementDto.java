@@ -5,10 +5,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.jdc.spring.model.constants.MediaType;
 import com.jdc.spring.model.entity.Account;
@@ -40,9 +42,14 @@ public class AnnouncementDto {
 	private Account postedBy;
 
 	public static AnnouncementDto toDto(Announcement entity) {
-		List<String> base64Images = entity.getMediaFiles().stream().map(media -> {
+		List<String> base64Images = entity.getMediaFiles().stream().flatMap(media -> {
+			if (media.getFilePathName() != null) {
+				return Arrays.stream(media.getFilePathName().split(","));
+			}
+			return Stream.<String>empty();
+		}).map(filePath -> {
 			try {
-				Path imagePath = Paths.get(media.getFilePathName());
+				Path imagePath = Paths.get(filePath);
 				if (Files.exists(imagePath)) {
 					byte[] imageBytes = Files.readAllBytes(imagePath);
 					return Base64.getEncoder().encodeToString(imageBytes);
@@ -56,6 +63,7 @@ public class AnnouncementDto {
 		String base64TitleImage = null;
 		var titleMedia = entity.getMediaFiles().stream().filter(media -> media.getTitleFilePathName() != null)
 				.findFirst().orElse(null);
+
 		if (titleMedia != null) {
 			try {
 				Path titleImagePath = Paths.get(titleMedia.getTitleFilePathName());
@@ -67,6 +75,7 @@ public class AnnouncementDto {
 				e.printStackTrace();
 			}
 		}
+
 		return new AnnouncementDto(entity.getAnnouncementId(), entity.getTitle(), entity.getContent(), base64TitleImage,
 				base64Images, entity.getTags(), entity.getLink(), entity.getFileName(), entity.getPostDate(),
 				entity.getPostTime(), entity.getType(), entity.getPostedBy());
