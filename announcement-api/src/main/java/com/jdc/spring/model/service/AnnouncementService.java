@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,7 @@ import com.jdc.spring.api.media.input.AnnouncementSearch;
 import com.jdc.spring.api.media.output.AnnouncementDto;
 import com.jdc.spring.model.entity.Announcement;
 import com.jdc.spring.model.entity.Announcement_;
+import com.jdc.spring.model.entity.Tag;
 import com.jdc.spring.model.repo.AccountRepo;
 import com.jdc.spring.model.repo.AnnouncementRepo;
 import com.jdc.spring.model.repo.MediaRepo;
@@ -64,7 +67,19 @@ public class AnnouncementService implements Serializable {
 		entity.setAnnouncementId(id);
 		entity.setTitle(form.getTitle());
 		entity.setContent(form.getContent());
-    	entity.setTags(form.getTags());
+		var tags = form.getTags();
+		if (tags != null && !tags.isBlank()) {
+		    Set<Tag> tagSet = Arrays.stream(tags.split(","))
+		            .map(String::trim)
+		            .filter(tag -> !tag.isBlank())
+		            .map(tag -> {
+		                Tag t = new Tag();
+		                t.setName(tag);
+		                return t;
+		            })
+		            .collect(Collectors.toSet());
+		    entity.setTags(tagSet);
+		}
     	entity.setLink(form.getLink());
     	entity.setFileName(form.getFileName());
     	entity.setPostDate(LocalDate.now());
@@ -90,6 +105,20 @@ public class AnnouncementService implements Serializable {
 	        .orElse(Collections.emptyList())
 	        .stream()
 	        .map(AnnouncementDto::toDto)
+	        .collect(Collectors.toList());
+
+	    if (result.isEmpty()) {
+	        throw new ApiBusinessException("No announcements found.");
+	    }
+
+	    return result;
+	}
+	
+	public List<AnnouncementDto> showLess() {
+	    List<AnnouncementDto> result = Optional.ofNullable(announcementRepo.findAll())
+	        .orElse(Collections.emptyList())
+	        .stream()
+	        .map(AnnouncementDto::toShowLessDto)
 	        .collect(Collectors.toList());
 
 	    if (result.isEmpty()) {

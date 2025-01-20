@@ -34,9 +34,11 @@ public class AnnouncementSearch {
 	        list.add(cb.like(cb.lower(root.get(Announcement_.title)), title.toLowerCase().concat("%")));
 	    }
 
-	    if (StringUtils.hasLength(tags)) {
-	        list.add(cb.like(cb.lower(root.get(Announcement_.tags)), tags.toLowerCase().concat("%")));
-	    }
+		/*
+		 * if (StringUtils.hasLength(tags)) {
+		 * list.add(cb.like(cb.lower(root.get(Announcement_.tags)),
+		 * tags.toLowerCase().concat("%"))); }
+		 */
 
 	    if (null != createFrom) {
 	        list.add(cb.greaterThanOrEqualTo(root.get(Announcement_.createAt), createFrom.atStartOfDay()));

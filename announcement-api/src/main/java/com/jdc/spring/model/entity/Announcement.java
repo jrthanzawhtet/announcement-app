@@ -3,7 +3,9 @@ package com.jdc.spring.model.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -21,6 +23,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -43,8 +47,6 @@ public class Announcement extends AbstractEntity {
 	@Column(columnDefinition = "TEXT")
 	private String content;
 
-	private String tags;
-
 	private String link;
 
 	private String fileName;
@@ -65,6 +67,10 @@ public class Announcement extends AbstractEntity {
 
 	@OneToMany(mappedBy = "announcement", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Media> mediaFiles = new ArrayList<>();
+
+	@ManyToMany
+	@JoinTable(name = "announcement_tags", joinColumns = @JoinColumn(name = "announcement_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	private Set<Tag> tags = new HashSet<>();
 
 	@CreatedDate
 	private LocalDateTime createAt;

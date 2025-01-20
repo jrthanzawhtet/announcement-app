@@ -35,6 +35,11 @@ public class PublicAnnouncementApi {
 		return ApiResponse.success(announcementService.findAll());
 	}
 	
+	@GetMapping("showLess")
+	public ApiResponse<List<AnnouncementDto>> showLess() {
+		return ApiResponse.success(announcementService.showLess());
+	}
+	
 	@GetMapping("{id}")
 	public ApiResponse<AnnouncementDto> showDetails(@PathVariable Long id){
 		return ApiResponse.success(announcementService.findById(id));
