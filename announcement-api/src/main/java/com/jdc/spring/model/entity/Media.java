@@ -20,11 +20,17 @@ public class Media {
 	private long id;
 	
 	@Column(nullable = false)
+	private String titleFilePathName;
+	
+	@Column(nullable = false)
 	private String filePathName;
 	
 	@ManyToOne
     @JoinColumn(name = "announcement_id", nullable = false)
     private Announcement announcement;
+	
+	
+	
 	
 	
 

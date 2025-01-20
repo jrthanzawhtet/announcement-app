@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 import com.jdc.spring.model.constants.MediaType;
 import com.jdc.spring.model.entity.Account;
 import com.jdc.spring.model.entity.Announcement;
@@ -27,65 +26,57 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AnnouncementDto {
 
-	  private Long announcementId;
-	    private String title;
-	    private String content;
-	    private List<String> base64Images;
-	    private String tags;
-	    private String link;
-	    private String fileName;
-	    private LocalDate postDate;
-	    private LocalDateTime postTime;
-	    private MediaType type;
-	    private Account postedBy;
-	    
+	private Long announcementId;
+	private String title;
+	private String content;
+	private String base64TitleImage;
+	private List<String> base64Images;
+	private String tags;
+	private String link;
+	private String fileName;
+	private LocalDate postDate;
+	private LocalDateTime postTime;
+	private MediaType type;
+	private Account postedBy;
+
 	public static AnnouncementDto toDto(Announcement entity) {
-	    List<String> base64Images = entity.getMediaFiles().stream()
-	        .map(media -> {
-	            try {
-	                Path imagePath = Paths.get(media.getFilePathName()); 
-	                if (Files.exists(imagePath)) {
-	                    byte[] imageBytes = Files.readAllBytes(imagePath);
-	                    return Base64.getEncoder().encodeToString(imageBytes);
-	                }
-	            } catch (Exception e) {
-	                e.printStackTrace();
-	            }
-	            return null; 
-	        })
-	        .filter(Objects::nonNull)
-	        .collect(Collectors.toList());
+		List<String> base64Images = entity.getMediaFiles().stream().map(media -> {
+			try {
+				Path imagePath = Paths.get(media.getFilePathName());
+				if (Files.exists(imagePath)) {
+					byte[] imageBytes = Files.readAllBytes(imagePath);
+					return Base64.getEncoder().encodeToString(imageBytes);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
 
-	    return new AnnouncementDto(
-	        entity.getAnnouncementId(),
-	        entity.getTitle(),
-	        entity.getContent(),
-	        base64Images,
-	        entity.getTags(),
-	        entity.getLink(),
-	        entity.getFileName(),
-	        entity.getPostDate(),
-	        entity.getPostTime(),
-	        entity.getType(),
-	        entity.getPostedBy()
-	    );
+		String base64TitleImage = null;
+		var titleMedia = entity.getMediaFiles().stream().filter(media -> media.getTitleFilePathName() != null)
+				.findFirst().orElse(null);
+		if (titleMedia != null) {
+			try {
+				Path titleImagePath = Paths.get(titleMedia.getTitleFilePathName());
+				if (Files.exists(titleImagePath)) {
+					byte[] titleImageBytes = Files.readAllBytes(titleImagePath);
+					base64TitleImage = Base64.getEncoder().encodeToString(titleImageBytes);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return new AnnouncementDto(entity.getAnnouncementId(), entity.getTitle(), entity.getContent(), base64TitleImage,
+				base64Images, entity.getTags(), entity.getLink(), entity.getFileName(), entity.getPostDate(),
+				entity.getPostTime(), entity.getType(), entity.getPostedBy());
 	}
 
-	
 	public static void select(CriteriaQuery<AnnouncementDto> cq, Root<Announcement> root) {
-		cq.multiselect(
-				root.get(Announcement_.announcementId),
-				root.get(Announcement_.title),
-				root.get(Announcement_.content),
-				root.get(Announcement_.tags),
-				root.get(Announcement_.link),
-				root.get(Announcement_.fileName),
-				root.get(Announcement_.postDate),
-				root.get(Announcement_.postTime),
-				root.get(Announcement_.type),
-				root.get(Announcement_.postedBy)
-				);
+		cq.multiselect(root.get(Announcement_.announcementId), root.get(Announcement_.title),
+				root.get(Announcement_.content), root.get(Announcement_.tags), root.get(Announcement_.link),
+				root.get(Announcement_.fileName), root.get(Announcement_.postDate), root.get(Announcement_.postTime),
+				root.get(Announcement_.type), root.get(Announcement_.postedBy));
 	}
-
 
 }

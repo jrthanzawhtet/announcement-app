@@ -64,6 +64,7 @@ public class PhotoUploadService {
 
 		return list;
 	}
+	
 
 	public String saveAnnouncementImage(Long id, MultipartFile file, int index) {
 
@@ -80,6 +81,9 @@ public class PhotoUploadService {
 			Files.copy(file.getInputStream(), imageFolderPath.resolve(imageName), StandardCopyOption.REPLACE_EXISTING);
 
 			Media media = new Media();
+			if(index == 0) {
+				media.setTitleFilePathName(imageFolder + "/" + imageName);
+			}
 	        media.setFilePathName(imageFolder + "/" + imageName);
 
 	        Announcement announcement = announcementRepo.findById(id)

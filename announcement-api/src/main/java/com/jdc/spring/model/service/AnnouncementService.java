@@ -80,7 +80,7 @@ public class AnnouncementService implements Serializable {
 		var entity = announcementRepo.findById(id)
 				.orElseThrow(() -> new ApiBusinessException("Invalid Announcement id."));
 		
-		var images = photoUploadService.saveAnnouncementImages(id, files);
+         photoUploadService.saveAnnouncementImages(id, files);
 		
 		return new DataModificationResult<Long>(entity.getAnnouncementId(), "Announcement has been updated.");
 	}
