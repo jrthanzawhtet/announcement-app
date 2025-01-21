@@ -24,7 +24,7 @@ public class PublicAnnouncementApi {
 	@Autowired
 	private AnnouncementService announcementService;
 	
-	@GetMapping
+	@GetMapping("search")
 	public ApiResponse<Page<AnnouncementDto>> search(AnnouncementSearch form,
 			@RequestParam(required = false, defaultValue = "0") int page, 
 			@RequestParam(required = false, defaultValue = "10") int size){

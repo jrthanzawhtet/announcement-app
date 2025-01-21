@@ -26,28 +26,26 @@ public class AnnouncementSearch {
 	public Predicate where(CriteriaBuilder cb, Root<Announcement> root) {
 	    var list = new ArrayList<Predicate>();
 
-	    if (null != announcementId && announcementId > 0) {
+	    if (Announcement_.announcementId != null) {
 	        list.add(cb.equal(root.get(Announcement_.announcementId), announcementId));
 	    }
 
 	    if (StringUtils.hasLength(title)) {
-	        list.add(cb.like(cb.lower(root.get(Announcement_.title)), title.toLowerCase().concat("%")));
+	        list.add(cb.like(cb.lower(root.get(Announcement_.title)), title.toLowerCase() + "%"));
 	    }
 
 	    if (StringUtils.hasLength(tags)) {
-	        list.add(cb.like(cb.lower(root.join(Announcement_.tags).get(Tag_.name)), tags.toLowerCase().concat("%")));
+	        var tagJoin = root.join(Announcement_.tags);
+	        list.add(cb.equal(cb.lower(tagJoin.get(Tag_.name)), tags.toLowerCase()));
 	    }
 
-	    if (null != createFrom) {
+	    if (createFrom != null) {
 	        list.add(cb.greaterThanOrEqualTo(root.get(Announcement_.createAt), createFrom.atStartOfDay()));
 	    }
-
-	    if (null != createTo) {
+	    if (createTo != null) {
 	        list.add(cb.lessThanOrEqualTo(root.get(Announcement_.createAt), createTo.atStartOfDay().plusDays(1)));
 	    }
 
 	    return cb.and(list.toArray(new Predicate[0]));
 	}
-
-
 }

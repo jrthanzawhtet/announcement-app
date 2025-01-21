@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jdc.spring.api.media.input.AnnouncementForm;
+import com.jdc.spring.api.media.input.TagsForm;
 import com.jdc.spring.model.service.AnnouncementService;
 import com.jdc.spring.utils.io.ApiResponse;
 import com.jdc.spring.utils.io.DataModificationResult;
@@ -40,6 +41,11 @@ public class AnnouncementsManagementApi {
 	public ApiResponse<DataModificationResult<Long>> uploadPhoto(@PathVariable Long id,
 			@RequestParam List<MultipartFile> files) {
 		return ApiResponse.success(service.uploadPhoto(id, files));
+	}
+	
+	@PostMapping("/tags")
+	public ApiResponse<DataModificationResult<Long>> createTags(@RequestBody TagsForm form, BindingResult result ){
+		return ApiResponse.success(service.createTags(form));
 	}
 
 }

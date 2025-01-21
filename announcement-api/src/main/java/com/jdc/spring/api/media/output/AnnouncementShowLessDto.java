@@ -4,19 +4,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.jdc.spring.model.constants.Role;
 import com.jdc.spring.model.entity.Announcement;
 import com.jdc.spring.model.entity.Tag;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class AnnouncementShowLessDto {
 
@@ -24,27 +24,30 @@ public class AnnouncementShowLessDto {
     private String title;
     private String content;
     private String base64TitleImage;
-    private String tags;
+    private List<String> tags;
     private LocalDate postDate;
     private Role role;
 
     public static AnnouncementShowLessDto toShowLessDto(Announcement entity) {
-        String base64TitleImage = Optional.ofNullable(
-                entity.getMediaFiles()
-                    .stream()
-                    .filter(media -> media.getTitleFilePathName() != null)
-                    .findFirst()
-                    .orElse(null)
-            )
-            .map(titleMedia -> encodeToBase64(titleMedia.getTitleFilePathName()))
+        String base64TitleImage = entity.getMediaFiles()
+            .stream()
+            .filter(media -> media.getTitleFilePathName() != null)
+            .findFirst()
+            .map(media -> encodeToBase64(media.getTitleFilePathName()))
             .orElse(null);
+
+        List<String> tagNames = Optional.ofNullable(entity.getTags())
+                .orElse(Set.of())
+                .stream()
+                .map(Tag::getName)
+                .collect(Collectors.toList());
 
         return new AnnouncementShowLessDto(
             entity.getAnnouncementId(),
             entity.getTitle(),
             entity.getContent(),
             base64TitleImage,
-            entity.getTags(),
+            tagNames, 
             entity.getPostDate(),
             entity.getPostedBy() != null ? entity.getPostedBy().getRole() : Role.Admin
         );
@@ -66,7 +69,14 @@ public class AnnouncementShowLessDto {
         return null;
     }
 
-	public AnnouncementShowLessDto(Long announcementId2, String title2, String content2, String base64TitleImage2,
-			Set<Tag> tags2, LocalDate postDate2, Role role2) {
-	}
+    public AnnouncementShowLessDto(Long announcementId, String title, String content, String base64TitleImage,
+                                   List<String> tags, LocalDate postDate, Role role) {
+        this.announcementId = announcementId;
+        this.title = title;
+        this.content = content;
+        this.base64TitleImage = base64TitleImage;
+        this.tags = tags; 
+        this.postDate = postDate;
+        this.role = role;
+    }
 }

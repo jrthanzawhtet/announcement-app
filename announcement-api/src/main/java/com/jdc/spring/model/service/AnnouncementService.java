@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -15,11 +16,13 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.jdc.spring.api.media.input.AnnouncementForm;
 import com.jdc.spring.api.media.input.AnnouncementSearch;
+import com.jdc.spring.api.media.input.TagsForm;
 import com.jdc.spring.api.media.output.AnnouncementDto;
 import com.jdc.spring.api.media.output.AnnouncementShowLessDto;
 import com.jdc.spring.model.entity.Announcement;
@@ -28,6 +31,7 @@ import com.jdc.spring.model.entity.Tag;
 import com.jdc.spring.model.repo.AccountRepo;
 import com.jdc.spring.model.repo.AnnouncementRepo;
 import com.jdc.spring.model.repo.MediaRepo;
+import com.jdc.spring.model.repo.TagRepo;
 import com.jdc.spring.utils.exceptions.ApiBusinessException;
 import com.jdc.spring.utils.io.DataModificationResult;
 
@@ -52,15 +56,45 @@ public class AnnouncementService implements Serializable {
 
 	private final AnnouncementRepo announcementRepo;
 
-	private final AccountRepo accountRepo;
-	
-	private final MediaRepo mediaRepo;
+	private final TagRepo tagRepo;
 
-	public DataModificationResult<Long> create(AnnouncementForm form) {		
-		var entity = form.entity();
-		entity = announcementRepo.save(entity);
-		return new DataModificationResult<Long>(entity.getAnnouncementId(), "Announcement has been created.");
+	public DataModificationResult<Long> create(AnnouncementForm form) {
+	    var entity = new Announcement();
+	    entity.setAnnouncementId(form.getAnnouncementId());
+	    entity.setTitle(form.getTitle());
+	    entity.setContent(form.getContent());
+	    entity.setLink(form.getLink());
+	    entity.setFileName(form.getFileName());
+	    entity.setPostDate(LocalDate.now());
+	    entity.setPostTime(LocalDateTime.now());
+	    entity.setType(form.getType());
+	    entity.setPostedBy(form.getPostedBy());
+	    entity.setCreateBy(form.getPostedBy().toString());
+	    
+	    if (form.getTags() != null && !form.getTags().isBlank()) {
+	        Set<String> newTagNames = Arrays.stream(form.getTags().split(","))
+	                .map(String::trim)
+	                .filter(tag -> !tag.isBlank())
+	                .collect(Collectors.toSet());
+
+	        Set<Tag> tagsToPersist = new HashSet<>();
+	        for (String tagName : newTagNames) {
+	            Tag tag = tagRepo.findByName(tagName).orElseGet(() -> {
+	                Tag newTag = new Tag();
+	                newTag.setName(tagName);
+	                return tagRepo.save(newTag);
+	            });
+	            tagsToPersist.add(tag);
+	        }
+	        entity.setTags(tagsToPersist);
+	    } else {
+	        entity.setTags(new HashSet<>());
+	    }
+
+	    entity = announcementRepo.save(entity);
+	    return new DataModificationResult<>(entity.getAnnouncementId(), "Announcement has been created.");
 	}
+
 
 	public DataModificationResult<Long> update(Long id, AnnouncementForm form) {
 		var entity = announcementRepo.findById(id)
@@ -68,27 +102,34 @@ public class AnnouncementService implements Serializable {
 		entity.setAnnouncementId(id);
 		entity.setTitle(form.getTitle());
 		entity.setContent(form.getContent());
-		var tags = form.getTags();
-		if (tags != null && !tags.isBlank()) {
-		    Set<Tag> tagSet = Arrays.stream(tags.split(","))
-		            .map(String::trim)
-		            .filter(tag -> !tag.isBlank())
-		            .map(tag -> {
-		                Tag t = new Tag();
-		                t.setName(tag);
-		                return t;
-		            })
-		            .collect(Collectors.toSet());
-		    entity.setTags(tagSet);
-		}
     	entity.setLink(form.getLink());
     	entity.setFileName(form.getFileName());
     	entity.setPostDate(LocalDate.now());
     	entity.setPostTime(LocalDateTime.now());
+    	entity.setModifiedAt(LocalDateTime.now());
     	entity.setType(form.getType());
     	entity.setPostedBy(form.getPostedBy());
+    	entity.setModifyBy(form.getPostedBy().toString());
 		entity = announcementRepo.saveAndFlush(entity);
+		if (form.getTags() != null && !form.getTags().isBlank()) {
+	        Set<String> newTagNames = Arrays.stream(form.getTags().split(","))
+	                .map(String::trim)
+	                .filter(tag -> !tag.isBlank())
+	                .collect(Collectors.toSet());
 
+	        Set<Tag> existingTags = newTagNames.stream()
+	                .map(tagName -> tagRepo.findByName(tagName).orElseGet(() -> {
+	                    Tag newTag = new Tag();
+	                    newTag.setName(tagName);
+	                    return newTag;
+	                }))
+	                .collect(Collectors.toSet());
+
+	        entity.setTags(existingTags);
+	    } else {
+	        entity.setTags(new HashSet<>());
+	    }
+	    entity = announcementRepo.saveAndFlush(entity);
 		return new DataModificationResult<Long>(entity.getAnnouncementId(), "Announcement has been updated.");
 	}
 
@@ -150,16 +191,29 @@ public class AnnouncementService implements Serializable {
 		Function<CriteriaBuilder, CriteriaQuery<AnnouncementDto>> queryFunc = cb -> {
 			var cq = cb.createQuery(AnnouncementDto.class);
 			var root = cq.from(Announcement.class);
-			AnnouncementDto.select(cq, root);
+			AnnouncementDto.select(cb, cq, root);
 			cq.where(form.where(cb, root));
-			
 			cq.orderBy(cb.asc(root.get(Announcement_.title)));
-			
 			return cq;
 		};
 
 		return announcementRepo.search(queryFunc, countFunc, page, size);
 	}
+
+	public DataModificationResult<Long> createTags(TagsForm form) {
+	    var name = form.getName();
+
+	    var existingTag = tagRepo.findByName(name);
+	    if (existingTag.isPresent()) {
+	        return new DataModificationResult<>(existingTag.get().getId(), "Tag already exists.");
+	    }
+
+	    var entity = form.entity();
+	    entity = tagRepo.save(entity);
+
+	    return new DataModificationResult<>(entity.getId(), "Tag has been created.");
+	}
+
 
 
 

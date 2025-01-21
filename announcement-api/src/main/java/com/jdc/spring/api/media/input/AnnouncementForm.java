@@ -1,15 +1,7 @@
 package com.jdc.spring.api.media.input;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.jdc.spring.model.constants.MediaType;
 import com.jdc.spring.model.entity.Account;
-import com.jdc.spring.model.entity.Announcement;
-import com.jdc.spring.model.entity.Tag;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -27,32 +19,5 @@ public class AnnouncementForm {
 	private String fileName;
 	private MediaType type;
 	private Account postedBy;
-
-	public Announcement entity() {
-		var entity = new Announcement();
-		entity.setAnnouncementId(announcementId);
-		entity.setTitle(title);
-		entity.setContent(content);
-		
-		if (tags != null && !tags.isBlank()) {
-		    Set<Tag> tagSet = Arrays.stream(tags.split(","))
-		            .map(String::trim)
-		            .filter(tag -> !tag.isBlank())
-		            .map(tag -> {
-		                Tag t = new Tag();
-		                t.setName(tag);
-		                return t;
-		            })
-		            .collect(Collectors.toSet());
-		    entity.setTags(tagSet);
-		}
-		entity.setLink(link);
-		entity.setFileName(fileName);
-		entity.setPostDate(LocalDate.now());
-		entity.setPostTime(LocalDateTime.now());
-		entity.setType(type);
-		entity.setPostedBy(postedBy);
-		return entity;
-	}
-
+	
 }
