@@ -1,6 +1,5 @@
 package com.jdc.spring.api.media.input;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 import org.springframework.util.StringUtils;
@@ -20,8 +19,7 @@ public class AnnouncementSearch {
 	private Long announcementId;
 	private String title;
 	private String tags;
-	private LocalDate createFrom;
-	private LocalDate createTo;
+	
 
 	public Predicate where(CriteriaBuilder cb, Root<Announcement> root) {
 	    var list = new ArrayList<Predicate>();
@@ -38,14 +36,9 @@ public class AnnouncementSearch {
 	        var tagJoin = root.join(Announcement_.tags);
 	        list.add(cb.equal(cb.lower(tagJoin.get(Tag_.name)), tags.toLowerCase()));
 	    }
-
-	    if (createFrom != null) {
-	        list.add(cb.greaterThanOrEqualTo(root.get(Announcement_.createAt), createFrom.atStartOfDay()));
-	    }
-	    if (createTo != null) {
-	        list.add(cb.lessThanOrEqualTo(root.get(Announcement_.createAt), createTo.atStartOfDay().plusDays(1)));
-	    }
-
+	    
 	    return cb.and(list.toArray(new Predicate[0]));
 	}
+	
+	
 }
